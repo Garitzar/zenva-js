@@ -6,6 +6,6 @@ function displayOutput() {
     const text = input.value;
     output.innerHTML = text;
 }
-//
+
 //button.addEventListener("click", displayOutput);
 button.onclick = displayOutput;
