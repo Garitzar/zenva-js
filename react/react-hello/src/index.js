@@ -70,3 +70,6 @@ const HelloParameter3 = (props) => {
 
 ReactDOM.render(<HelloParameter3 name="Jonas Sandroos"/>, document.querySelector('#root'));
 /// HelloParameter3 End
+
+// Notes
+// HelloParameter2 takes props and deconstructs it into ´({fName, lName})´ while HelloParameter3 does that inside ´const {name} = props;´.
