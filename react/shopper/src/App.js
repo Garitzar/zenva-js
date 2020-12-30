@@ -1,37 +1,79 @@
 import React, { useState } from "react";
 import Nav from "./Nav";
 import "./App.css";
- 
-function Tab(name, content){
-    this.name = name;
-    this.content = content;
+import ItemPage from './ItemPage';
+import {items} from './static-data';
+import CartPage from "./CartPage";
+
+const summarizeCart = (cart) => {
+    const groupedItems = cart.reduce((summary, item) => {
+        summary[item.id] = summary[item.id] || {
+            ...item,
+            count : 0
+        };
+
+        summary[item.id].count++;
+        return summary;
+    }, {}); // {} is the initial value of summary
+
+    return Object.values(groupedItems);
 };
 
-const Items = new Tab('items', <span>the items</span>);
-const Cart = new Tab('cart', <span>the cart</span>);
-
-const Tabs = [Items, Cart];
-
 const App = () => {
-    const [activeTab, setActiveTab] = useState(Tabs[0]);
+    const [activeTab, setActiveTab] = useState('items');
+    const [cart, setCart] = useState([]);
+
+    const addToCart = (item) => {
+        setCart(prevCart => [...prevCart, item]);
+    };
+
+    const removeItem = (item) => {
+        let index = cart.findIndex(i => i.id === item.id);
+        if(index >= 0){
+            setCart(cart => {
+                const copy = [...cart];
+                copy.splice(index, 1);
+                return copy;
+            });
+        }
+    };
+
     return (
         <div className="App">
         <Nav
-            tabs = {Tabs}
             activeTab = {activeTab}
             onTabChange = {setActiveTab}
         />
         <main className="app-content">
             <span>
-                <Content tab={activeTab} />
+                <Content 
+                    tab={activeTab} 
+                    onAddToCart={addToCart}
+                    cart={summarizeCart(cart)}
+                    onRemoveItem={removeItem}
+                />
             </span>
         </main>
         </div>
     );
 };
 
-const Content = ({tab}) => {
-    return tab.content;
+const Content = ({ tab, onAddToCart, cart, onRemoveItem}) => {
+    switch (tab) {
+      default:
+      case 'items':
+        return (
+          <ItemPage
+            items={items}
+            onAddToCart={onAddToCart}
+          />
+        );
+      case 'cart':
+        return <CartPage 
+        items={cart}
+        onAddOne={onAddToCart}
+        onRemoveOne={onRemoveItem} />
+    }
 };
- 
+
 export default App;
